@@ -1889,8 +1889,7 @@ const NFLMockDraft = () => {
                       {acquiredPicks.map((p, i) => (
                         <div key={i} className="flex items-center gap-2 text-white text-sm">
                           <span className="text-green-400">+</span>
-                          <span>{p.year} Round {p.round} pick</span>
-                          {p.fromTeam && <span className="text-gray-400 text-xs">(from {p.fromTeam})</span>}
+                          <span>{formatPickDisplay(p.round, p.year, p.fromTeam)}</span>
                         </div>
                       ))}
                     </div>
@@ -1904,8 +1903,7 @@ const NFLMockDraft = () => {
                       {tradedAwayPicks.map((p, i) => (
                         <div key={i} className="flex items-center gap-2 text-white text-sm">
                           <span className="text-red-400">-</span>
-                          <span>{p.year} Round {p.round} pick</span>
-                          {p.fromTeam && <span className="text-gray-400 text-xs">(to {p.fromTeam})</span>}
+                          <span>{formatPickDisplay(p.round, p.year, p.fromTeam)}</span>
                         </div>
                       ))}
                     </div>
@@ -2218,7 +2216,7 @@ const NFLMockDraft = () => {
                         isSelected ? 'bg-green-500 border-green-500' : 'border-gray-400'
                       }`} />
                       <span className="text-white">
-                        {p.year} Round {p.round}{p.fromTeam && ` (from ${p.fromTeam})`}
+                        {formatPickDisplay(p.round, p.year, p.fromTeam)}
                       </span>
                     </button>
                   );
@@ -2320,8 +2318,7 @@ const NFLMockDraft = () => {
                       onClick={() => toggleCounterPick(p)}
                       className={`p-2 rounded-lg text-sm ${isSelected ? 'bg-yellow-600 text-white' : 'bg-white/10 text-gray-300 hover:bg-white/20'}`}
                     >
-                      {p.year} Round {p.round}
-                      {p.fromTeam && <span className="text-xs block">({p.fromTeam})</span>}
+                      {formatPickDisplay(p.round, p.year, p.fromTeam)}
                     </button>
                   );
                 })}
@@ -2455,7 +2452,7 @@ const NFLMockDraft = () => {
                         <p className="text-gray-400 text-sm">None selected</p>
                       ) : (
                         customTradeGive.map((p, i) => (
-                          <p key={i} className="text-white text-sm">{p.year} Round {p.round}</p>
+                          <p key={i} className="text-white text-sm">{formatPickDisplay(p.round, p.year, p.fromTeam)}</p>
                         ))
                       )}
                     </div>
@@ -2465,7 +2462,7 @@ const NFLMockDraft = () => {
                         <p className="text-gray-400 text-sm">None selected</p>
                       ) : (
                         customTradeReceive.map((p, i) => (
-                          <p key={i} className="text-white text-sm">{p.year} Round {p.round}</p>
+                          <p key={i} className="text-white text-sm">{formatPickDisplay(p.round, p.year, p.fromTeam)}</p>
                         ))
                       )}
                     </div>
