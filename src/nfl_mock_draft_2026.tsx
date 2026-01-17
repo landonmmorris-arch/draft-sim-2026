@@ -553,14 +553,25 @@ const NFLMockDraft = () => {
     return prospects.map((p, i) => ({ ...p, rank: i + 1 }));
   };
 
+  // Helper to get team's draft position (0-31)
+  const getTeamDraftPosition = (team: string): number => {
+    const position = initialDraftOrder.indexOf(team);
+    return position !== -1 ? position : 15; // Default to middle if not found
+  };
+
   // Helper to format pick display
   const formatPickDisplay = (round: number, year: number, team?: string, actualPickNum?: number) => {
     if (year === 2026 && actualPickNum !== undefined) {
       // For 2026 with actual pick number, show it
       return team ? `Pick #${actualPickNum + 1} (from ${team})` : `Pick #${actualPickNum + 1}`;
+    } else if (year === 2026 && team) {
+      // For 2026 with team, calculate pick number based on team's draft position
+      const teamPosition = getTeamDraftPosition(team);
+      const pickNum = (round - 1) * 32 + teamPosition;
+      return `Pick #${pickNum + 1} (from ${team})`;
     } else if (year === 2026) {
-      // For 2026, show year and round when we don't have exact pick
-      return team ? `2026 R${round} (from ${team})` : `2026 R${round}`;
+      // For 2026, show year and round when we don't have exact pick or team
+      return `2026 R${round}`;
     } else {
       // For future years, show year and round
       return team ? `${year} R${round} (from ${team})` : `${year} R${round}`;
@@ -2144,7 +2155,7 @@ const NFLMockDraft = () => {
                             )
                           ) : (
                             <>You receive: Pick #{option.targetPickInRound}
-                              {option.additionalPicks.length > 0 && ` + ${option.additionalPicks.map((p: string) => p).join(', ')}`}
+                              {option.additionalPicks.length > 0 && ` + ${option.additionalPicks.join(', ')}`}
                             </>
                           )}
                         </p>
