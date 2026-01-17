@@ -1157,48 +1157,6 @@ const NFLMockDraft = () => {
       setCounterOffer(null);
     }
   };
-
-  // Simulate picks from current position up to (but not including) targetPick
-  const simulatePicksUpTo = (targetPickNum: number) => {
-    const currentRound = Math.floor(pick / 32);
-    const targetPickInRound = targetPickNum % 32;
-    const currentPickInRound = pick % 32;
-
-    let newPicks = [...picks];
-    let newAvailable = [...available];
-    let newRecentPicks = [...recentPicks];
-
-    // Simulate each pick from current to target
-    for (let i = currentPickInRound; i < targetPickInRound; i++) {
-      const pickNum = currentRound * 32 + i;
-      const teamPicking = draftOrder[i];
-
-      if (myTeams.includes(teamPicking)) continue; // Skip user's picks
-
-      // AI makes a pick
-      const needs = getTeamNeeds(teamPicking);
-      const scored = newAvailable.map(p => {
-        let score = p.grade;
-        const needIdx = needs.indexOf(p.position);
-        if (needIdx !== -1) score += (5 - needIdx) * 4;
-        return { player: p, score };
-      });
-      scored.sort((a, b) => b.score - a.score);
-      const playerPicked = scored[Math.floor(Math.random() * Math.min(3, scored.length))]?.player;
-
-      if (playerPicked) {
-        const roundNum = Math.floor(pickNum / 32) + 1;
-        const pickInRoundNum = (pickNum % 32) + 1;
-        const newPickEntry = { round: roundNum, pick: pickInRoundNum, team: teamPicking, player: playerPicked };
-        newPicks.push(newPickEntry);
-        newRecentPicks = [newPickEntry, ...newRecentPicks].slice(0, 3);
-        newAvailable = newAvailable.filter(p => p.name !== playerPicked.name);
-      }
-    }
-
-    return { newPicks, newAvailable, newRecentPicks };
-  };
-
   const offerTradeUp = (option: any) => {
     if (Math.random() < option.acceptChance) {
       const userTeam = myTeams[0];
@@ -1680,7 +1638,6 @@ const NFLMockDraft = () => {
       const bestNeedAvailable = availableAtPick
         .filter(prospect => needs.includes(prospect.position))
         .sort((a, b) => b.grade - a.grade)[0];
-      const bestNeedGrade = bestNeedAvailable ? bestNeedAvailable.grade : 50;
 
       // Calculate curved score:
       // If you took the best available player, you did well
@@ -1849,7 +1806,7 @@ const NFLMockDraft = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
             {myTeams.map(team => {
               const teamPicks = picks.filter(p => p.team === team);
-              const {grade, score, details} = calculateGrade(team, teamPicks);
+              const {score, details} = calculateGrade(team, teamPicks);
               const needs = getTeamNeeds(team);
 
               // Calculate average player grade
